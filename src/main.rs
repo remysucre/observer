@@ -23,18 +23,37 @@ impl<T> Observable<T> {
     }
 }
 
-fn sink(item: &usize) {
-    println!("Got {:?}", *item)
+fn sink1(item: &usize) {
+    println!("Sink 1 got {:?}", *item)
 }
 
-fn server(item: &usize) {
+fn sink2(item: &usize) {
+    println!("Sink 2 got {:?}", *item)
+}
+
+fn server1(item: &usize) {
     let mut result = Observable::new();
-    result.subscribe(sink);
+    result.subscribe(sink1);
+    result.subscribe(sink2);
     result.notify(*item * 2);
 }
 
+fn server2(item: &usize) {
+    let mut result = Observable::new();
+    result.subscribe(sink1);
+    result.subscribe(sink2);
+    result.notify(*item * 4);
+}
+
 fn main() {
-    let mut source = Observable::new();
-    source.subscribe(server);
-    source.notify(1);
+    let mut source1 = Observable::new();
+    let mut source2 = Observable::new();
+
+    source1.subscribe(server1);
+    source2.subscribe(server1);
+    source1.subscribe(server2);
+    source2.subscribe(server2);
+
+    source1.notify(1);
+    source2.notify(2);
 }

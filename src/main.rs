@@ -1,5 +1,5 @@
 pub struct Observable<T> {
-    subscribers: Vec<Box<dyn Fn(&T) + Send>>,
+    subscribers: Vec<Box<dyn Fn(&T)>>,
 }
 
 impl<T> Observable<T> {
@@ -11,7 +11,7 @@ impl<T> Observable<T> {
 
     pub fn subscribe<F>(&mut self, callback: F)
     where
-        F: 'static + Fn(&T) + Send,
+        F: 'static + Fn(&T),
     {
         self.subscribers.push(Box::new(callback));
     }

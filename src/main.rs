@@ -24,7 +24,7 @@ impl<T> Observable<T> {
 }
 
 fn observer2(item: &usize) {
-    println!("another {:?}", *item)
+    println!("Got {:?}", *item)
 }
 
 fn observer1(item: &usize) {

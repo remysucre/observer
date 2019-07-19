@@ -1,40 +1,40 @@
 pub struct Observable<T> {
-    subscribers: Vec<Box<dyn Fn(&T)>>,
+    observers: Vec<Box<dyn Fn(&T)>>,
 }
 
 impl<T> Observable<T> {
     pub fn new() -> Observable<T> {
         Observable {
-            subscribers: Vec::new(),
+            observers: Vec::new(),
         }
     }
 
-    pub fn subscribe<F>(&mut self, callback: F)
+    pub fn subscribe<F>(&mut self, observer: F)
     where
         F: 'static + Fn(&T),
     {
-        self.subscribers.push(Box::new(callback));
+        self.observers.push(Box::new(observer));
     }
 
     pub fn notify(&self, item: T) {
-        for callback in &self.subscribers {
-            callback(&item);
+        for observer in &self.observers {
+            observer(&item);
         }
     }
 }
 
-fn observer2(item: &usize) {
+fn sink(item: &usize) {
     println!("Got {:?}", *item)
 }
 
-fn observer1(item: &usize) {
-    let mut observable2 = Observable::new();
-    observable2.subscribe(observer2);
-    observable2.notify(*item * 2);
+fn server(item: &usize) {
+    let mut result = Observable::new();
+    result.subscribe(sink);
+    result.notify(*item * 2);
 }
 
 fn main() {
-    let mut observable1 = Observable::new();
-    observable1.subscribe(observer1);
-    observable1.notify(5);
+    let mut source = Observable::new();
+    source.subscribe(server);
+    source.notify(1);
 }
